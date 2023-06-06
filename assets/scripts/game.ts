@@ -30,21 +30,33 @@ export class Game extends Component {
   @property({ type: Node })
   lineNode: Node;
 
+  @property({ type: Node })
+  gameOverNode: Node;
+
   prepareBlockSeq: number;
   score = 0;
 
   private boom: AudioClip = null!;
   private knock: AudioClip = null!;
 
-  kLimitHeight = 450;
+  kLimitHeight = -300; //400;
   kWarningHeight = 280;
+
+  get isGameOver(): boolean {
+    return this.gameOverNode.active;
+  }
 
   init() {
     this.showBlockNode.active = false;
     this.prepareBlockSeq = 1;
 
-    this.showPrepareBlock();
+    this.gameOverNode.active = false;
     this.lineNode.active = false;
+
+    this.score = 0;
+    this.cleanupBlocks();
+
+    this.showPrepareBlock();
   }
 
   showPrepareBlock() {
@@ -84,6 +96,7 @@ export class Game extends Component {
   }
 
   onTouchStart(event: EventTouch) {
+    if (this.isGameOver) return;
     const v2TouchStart = event.getUILocation();
     const v3TouchStart = this.node
       .getComponent(UITransform)
@@ -92,6 +105,7 @@ export class Game extends Component {
   }
 
   onTouchMove(event: EventTouch) {
+    if (this.isGameOver) return;
     if (!this.showBlockNode.active) return;
 
     const v2TouchMove = event.getUILocation();
@@ -115,6 +129,7 @@ export class Game extends Component {
   }
 
   onTouchEnd(event: EventTouch) {
+    if (this.isGameOver) return;
     if (!this.showBlockNode.active) return;
     this.showBlockNode.active = false;
     const posBlockShow = this.showBlockNode.getPosition();
@@ -154,6 +169,10 @@ export class Game extends Component {
       }
     }
   }
+  cleanupBlocks() {
+    const blockNode = this.node.getChildByName('block');
+    blockNode.removeAllChildren();
+  }
   hideLine() {
     this.lineNode.active = false;
   }
@@ -161,7 +180,12 @@ export class Game extends Component {
     this.lineNode.active = true;
   }
   gameOver() {
-    console.log('game over');
+    this.scheduleOnce(() => {
+      this.gameOverNode.active = true;
+      this.lineNode.active = false;
+      this.gameOverNode.getChildByName('score').getComponent(Label).string =
+        this.score.toString();
+    }, 1);
   }
 
   addScore(score: number) {
