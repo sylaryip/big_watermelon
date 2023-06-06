@@ -47,8 +47,7 @@ export class Block extends Component {
     contact: IPhysics2DContact | null
   ) {
     if (this.gameScript.isGameOver) return;
-
-    this.isCollided = true;
+    if (otherCollider.tag >= 0) this.isCollided = true;
     if (this.isUpScaling) return;
     if (!this.detectSameBlock(selfCollider, otherCollider)) return;
 
