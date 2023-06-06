@@ -13,6 +13,7 @@ import {
   UITransform,
   Vec3,
 } from 'cc';
+import { Block } from './block';
 const { ccclass, property } = _decorator;
 
 @ccclass('game')
@@ -26,19 +27,24 @@ export class Game extends Component {
   @property({ type: Node })
   scoreNode: Node;
 
+  @property({ type: Node })
+  lineNode: Node;
+
   prepareBlockSeq: number;
   score = 0;
 
   private boom: AudioClip = null!;
   private knock: AudioClip = null!;
 
-  kLimitHeight = 300;
+  kLimitHeight = 450;
+  kWarningHeight = 280;
 
   init() {
     this.showBlockNode.active = false;
     this.prepareBlockSeq = 1;
 
     this.showPrepareBlock();
+    this.lineNode.active = false;
   }
 
   showPrepareBlock() {
@@ -117,7 +123,7 @@ export class Game extends Component {
 
     this.scheduleOnce(() => {
       this.showPrepareBlock();
-    }, 1);
+    }, 0.75);
   }
 
   playBoom() {
@@ -125,6 +131,37 @@ export class Game extends Component {
   }
   playKnock() {
     this.getComponent(AudioSource)?.playOneShot(this.knock);
+  }
+
+  update() {
+    this.detectBlocksHeight();
+  }
+  detectBlocksHeight() {
+    const blockNode = this.node.getChildByName('block');
+
+    const children = blockNode.children;
+    for (let i = 0; i < children.length; i++) {
+      const block = children[i].getComponent(Block);
+      if (!block.isCollided) continue;
+      const pos = children[i].getPosition();
+      if (pos.y > this.kLimitHeight) {
+        this.gameOver();
+      }
+      if (pos.y > this.kWarningHeight) {
+        this.showLine();
+      } else {
+        this.hideLine();
+      }
+    }
+  }
+  hideLine() {
+    this.lineNode.active = false;
+  }
+  showLine() {
+    this.lineNode.active = true;
+  }
+  gameOver() {
+    console.log('game over');
   }
 
   addScore(score: number) {

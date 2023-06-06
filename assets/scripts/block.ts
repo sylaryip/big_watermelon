@@ -12,10 +12,11 @@ import {
 const { ccclass, property } = _decorator;
 
 @ccclass('block')
-export class block extends Component {
+export class Block extends Component {
   gameScript: Game = null;
   pos: math.Vec3 = null;
   isUpScaling = false;
+  isCollided = false;
 
   onLoad() {
     this.gameScript = find('Canvas').getComponent('game') as Game;
@@ -45,6 +46,7 @@ export class block extends Component {
     otherCollider: Collider2D,
     contact: IPhysics2DContact | null
   ) {
+    this.isCollided = true;
     if (this.isUpScaling) return;
     if (!this.detectSameBlock(selfCollider, otherCollider)) return;
 
