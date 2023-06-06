@@ -54,6 +54,7 @@ export class Game extends Component {
     this.lineNode.active = false;
 
     this.score = 0;
+    this.scoreNode.getComponent(Label).string = this.score.toString();
     this.cleanupBlocks();
 
     this.showPrepareBlock();
