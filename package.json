@@ -1,0 +1,13 @@
+{
+  "name": "big_watermelon",
+  "uuid": "d8e67bf1-8528-4861-b473-6c94d5dd6550",
+  "creator": {
+    "version": "3.7.3",
+    "registry": {
+      "remote": {}
+    },
+    "dependencies": {
+      "localization-editor": "1.0.1"
+    }
+  }
+}
