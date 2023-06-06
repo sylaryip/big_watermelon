@@ -39,7 +39,7 @@ export class Game extends Component {
   private boom: AudioClip = null!;
   private knock: AudioClip = null!;
 
-  kLimitHeight = 400;
+  kLimitHeight = 430;
   kWarningHeight = 280;
 
   get isGameOver(): boolean {
